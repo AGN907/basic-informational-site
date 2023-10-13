@@ -1,26 +1,21 @@
-const http = require('http')
-const fs = require('fs/promises')
-const url = require('url')
-async function navigateTo(page) {
-  const file = await fs.readFile(page + '.html')
+const express = require('express')
 
-  return file
-}
+const app = express()
 
-http.createServer(async (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/html' })
-  const route = url.parse(req.url).href
-  let page;
-  if (route === '/') {
-    page = await navigateTo('index')
-  } else if (route === '/contact') {
-    page = await navigateTo('contact-me')
-  } else if (route === '/about') {
-    page = await navigateTo('about')
-  } else {
-    page = await navigateTo('404')
-  }
+const host = "127.0.0.1"
+const port = 3000
 
-  res.write(page)
-  res.end()
-}).listen(8080)
+
+
+app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
+
+app.get('/contact', (req, res) => res.sendFile(__dirname + '/contact-me.html'))
+
+app.get('/about', (req, res) => res.sendFile(__dirname + '/about.html'))
+
+app.get('/*', (req, res) => res.sendFile(__dirname + '/404.html'))
+
+app.listen(port, host, () => {
+  console.log(`Listening on port http://${host}:${port}`)
+})
+
